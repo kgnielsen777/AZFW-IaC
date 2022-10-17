@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "Management"
+    },
+    "storageAccountName": {
+      "value": "mgmtstorageqwerty"
+    },
+    "workspaceName": {
+      "value": "mgmtworkspace"
+    },
+    "contactEmails":{
+      "value": [
+        "matgri@microsoft.com",
+        "Matt_Grimshaw@Yahoo.com"
+        ]
+    },
+    "startDate": {
+      "value": "2022-11-01"
+    },
+    "endDate": {
+      "value": "2029-11-01"
+    },
+    "functionAppName": {
+      "value": "mgmtfaqwerty"
+    },
+    "firewallPolicyName":{
+      "value": "mgmtfirewalpolicy"
+    }
+  }
+}

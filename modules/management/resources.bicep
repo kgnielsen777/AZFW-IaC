@@ -2,10 +2,15 @@ targetScope = 'subscription'
 
 param location string = deployment().location
 param resourceGroupName string
-param automationAccountName string
-param ddosPlanName string
+//param automationAccountName string
+//param ddosPlanName string
 param storageAccountName string
 param workspaceName string
+param startDate string
+param endDate string
+param contactEmails array
+param functionAppName string
+param firewallPolicyName string
 
 module group '../shared/resource-group.bicep' = {
   name: 'resource-group-${uniqueString(resourceGroupName)}'
@@ -15,6 +20,7 @@ module group '../shared/resource-group.bicep' = {
   }
 }
 
+/*
 module automationAccount '../shared/automation-account.bicep' = {
   scope: resourceGroup(resourceGroupName)
   name: 'automation-account-${uniqueString(resourceGroupName, automationAccountName)}'
@@ -27,7 +33,9 @@ module automationAccount '../shared/automation-account.bicep' = {
     skuName: 'Basic'
   }
 }
+*/
 
+/*
 module ddosProtectionPlan '../shared/ddos-protection-plan.bicep' = if(false) {
   scope: resourceGroup(resourceGroupName)
   name: 'ddos-protection-plan-${uniqueString(resourceGroupName, ddosPlanName)}'
@@ -39,6 +47,7 @@ module ddosProtectionPlan '../shared/ddos-protection-plan.bicep' = if(false) {
     ddosPlanName: ddosPlanName
   }
 }
+*/
 
 module storageAccount '../shared/storage-account.bicep' = {
   scope: resourceGroup(resourceGroupName)
@@ -91,3 +100,37 @@ module solution '../shared/log-analytics-workspace-solution.bicep' = [for soluti
     solutionName: solution
   }
 }]
+
+
+
+module budget '../shared/azure-budget.bicep' = {
+  name: 'budget-${uniqueString(resourceGroupName)}'
+  params: {
+    budgetName: 'monthly-budget'
+    amount: 500
+    startDate: startDate
+    endDate: endDate
+    contactEmails: contactEmails
+  }
+}
+
+
+module functionapp  '../shared/function-app.bicep' = {
+  scope: resourceGroup(resourceGroupName)
+  name: 'functionapp-${uniqueString(resourceGroupName)}'
+  params: {
+    location: location
+    appInsightsLocation: location
+    functionAppName: functionAppName
+    storageConnectionString: storageAccount.outputs.storageConnectionString
+  }
+}
+
+module firewallpolicy '../shared/firewall-policy.bicep' = {
+  scope: resourceGroup(resourceGroupName)
+  name: 'firewallpolicy-${uniqueString(resourceGroupName)}'
+  params:{
+    name: firewallPolicyName
+    location: location
+  }
+}
