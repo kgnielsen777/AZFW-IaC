@@ -1,1 +1,1 @@
-# Azure firewall ruleset IaC
+# Azure firewall ruleset as IaC
