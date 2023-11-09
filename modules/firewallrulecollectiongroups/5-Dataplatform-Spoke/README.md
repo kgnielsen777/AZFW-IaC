@@ -1,4 +1,4 @@
-# spoke 2
+# Landing zone Dataplatform rules
 
 These are rules related to on-premises and spoke to spoke connections:
 

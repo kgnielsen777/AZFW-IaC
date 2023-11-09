@@ -1,25 +1,51 @@
 param parentName string
+param zone string
+param InboundnetworkRuleCollectionName string = 'Inbound-Allow-${zone}-Network-Rules'
+param InboundapplicationRuleCollectionName string = 'Inbound-Allow-${zone}-Application-Rules'
+param OutboundnetworkRuleCollectionName string = 'Outbound-Allow-${zone}-Network-Rules'
+param OutboundapplicationRuleCollectionName string = 'Outbound-Allow-${zone}-Application-Rules'
+param SortingNumber int
+param RuleCollectionGroupName string = '${SortingNumber}_${zone}'
 
 resource parentFirewall 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
   name: parentName
 }
 
-resource vnetRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2020-11-01' = {
-  name: 'On-premises'
+resource RuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2021-05-01' = {
+  name: RuleCollectionGroupName
   parent: parentFirewall
   properties: {
-    priority: 300
+    priority: 100
     ruleCollections: [
       {
-        name: 'Allow-onprem-Network-Rules'
-        priority: 301
+        name: InboundnetworkRuleCollectionName
+        priority: 101
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
           type: 'Allow'
         }
-        // Active Directory Web Services (ADWS)
         rules: [
-          // Justification
+        ]
+      }
+      {
+        name: InboundapplicationRuleCollectionName
+        priority: 102
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+        ]
+      }
+      {
+        name: OutboundnetworkRuleCollectionName
+        priority: 103
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+                    // Justification
           // Active Directory Web Services (ADWS)
           // https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements
           {
@@ -226,9 +252,9 @@ resource vnetRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollect
         ]
       }
       {
-        name: 'Allow-onprem-Application-Rules'
+        name: OutboundapplicationRuleCollectionName
+        priority: 104
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
-        priority: 302
         action: {
           type: 'Allow'
         }
@@ -250,6 +276,7 @@ resource vnetRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollect
               '10.1.0.4'
             ]
           }
+
         ]
       }
     ]

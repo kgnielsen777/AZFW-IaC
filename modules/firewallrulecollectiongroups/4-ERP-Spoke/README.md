@@ -1,4 +1,4 @@
-# spoke 1
+# ERP Landing zone rules
 
 These are rules related to on-premises connections:
 

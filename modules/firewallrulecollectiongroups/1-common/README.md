@@ -1,4 +1,4 @@
-# Common Management Plane Services
+# Common rules for all hubs and spokes
 
 This are top level common rules that apply to all Azure Management Plane traffic.
 

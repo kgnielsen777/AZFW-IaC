@@ -1,17 +1,24 @@
 param parentName string
+param zone string
+param InboundnetworkRuleCollectionName string = 'Inbound-Allow-${zone}-Network-Rules'
+param InboundapplicationRuleCollectionName string = 'Inbound-Allow-${zone}-Application-Rules'
+param OutboundnetworkRuleCollectionName string = 'Outbound-Allow-${zone}-Network-Rules'
+param OutboundapplicationRuleCollectionName string = 'Outbound-Allow-${zone}-Application-Rules'
+param SortingNumber int
+param RuleCollectionGroupName string = '${SortingNumber}_${zone}'
 
 resource parentFirewall 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
   name: parentName
 }
 
-resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2021-05-01' = {
-  name: 'ManagementPlane'
+resource RuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2021-05-01' = {
+  name: RuleCollectionGroupName
   parent: parentFirewall
   properties: {
     priority: 100
     ruleCollections: [
       {
-        name: 'Allow-ManagementPlane-Network-Rules'
+        name: InboundnetworkRuleCollectionName
         priority: 101
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -102,7 +109,7 @@ resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleColle
         ]
       }
       {
-        name: 'Allow-ManagementPlane-Application-Rules'
+        name: InboundapplicationRuleCollectionName
         priority: 102
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -161,8 +168,8 @@ resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleColle
           {
             // Justification
             // Required for Azure Site Recovery
-            // Required so that data can be written to the cache storage account in the source region from the VM. 
-            // If you know all the cache storage accounts for your VMs, you can allow access to the specific storage account URLs 
+            // Required so that data can be written to the cache storage account in the source region from the VM.
+            // If you know all the cache storage accounts for your VMs, you can allow access to the specific storage account URLs
             // (Ex: cache1.blob.core.windows.net and cache2.blob.core.windows.net) instead of *.blob.core.windows.net
             // https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-about-networking
             ruleType: 'ApplicationRule'
@@ -426,6 +433,26 @@ resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleColle
             destinationAddresses: []
             sourceIpGroups: []
           }
+        ]
+      }
+      {
+        name: OutboundnetworkRuleCollectionName
+        priority: 103
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+        ]
+      }
+      {
+        name: OutboundapplicationRuleCollectionName
+        priority: 104
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Allow'
+        }
+        rules: [
         ]
       }
     ]
