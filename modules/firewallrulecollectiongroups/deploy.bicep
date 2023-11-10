@@ -104,6 +104,30 @@ module BillingApplication '6-BillingApplication-Spoke/BillingApplicationRules.bi
   ]
 }
 
+module Identity '7-Identity-Spoke/IdentityRules.bicep' = {
+  name: 'rcg-Identity-deployment'
+  params: {
+    parentName: parentName
+    zone:'EXAMPLE_Identity'
+    SortingNumber: 7
+  }
+  dependsOn: [
+    BillingApplication
+  ]
+}
+
+module AzureVirtualDesktop '8-AzureVirtualDesktop-Spoke/AzureVirtualDesktopRules.bicep' = {
+  name: 'rcg-AzureVirtualDesktop-deployment'
+  params: {
+    parentName: parentName
+    zone:'EXAMPLE_AzureVirtualDesktop'
+    SortingNumber: 8
+  }
+  dependsOn: [
+    Identity
+  ]
+}
+
 /*
 module spoke3 '6-Spoke3-ContainerApp3/spoke3.bicep' = {
   name: 'rcg-spoke3-deployment'
